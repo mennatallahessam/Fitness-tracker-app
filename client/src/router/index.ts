@@ -51,11 +51,6 @@ const router = createRouter({
       name: 'admin',
       component: AdminView,
     },
-    {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
-    },
   ],
 })
 
@@ -63,7 +58,7 @@ import { useAuthStore } from '../stores/auth'
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  const publicPages = ['/', '/login', '/register', '/about']
+  const publicPages = ['/', '/login', '/register']
   const authRequired = !publicPages.includes(to.path)
 
   if (authRequired && !authStore.isLoggedIn) {

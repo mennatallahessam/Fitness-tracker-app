@@ -289,15 +289,15 @@ const deleteActivity = async (id: string) => {
                 @select="addFriendTag"
                 expanded
               >
-                <template #default="{ option }">
-                  <div class="media" v-if="option">
+                <template #option="props">
+                  <div class="media" v-if="(props as any).option">
                     <div class="media-left">
-                      <figure class="image is-24x24">
-                        <img :src="option.avatar" class="is-rounded" />
-                      </figure>
+                      <img :src="(props as any).option.avatar || 'https://via.placeholder.com/32'" class="is-rounded" width="32">
                     </div>
                     <div class="media-content">
-                      {{ option.full_name }} (@{{ option.username }})
+                      {{ (props as any).option.full_name }}
+                      <br>
+                      <small>@{{ (props as any).option.username }}</small>
                     </div>
                   </div>
                 </template>

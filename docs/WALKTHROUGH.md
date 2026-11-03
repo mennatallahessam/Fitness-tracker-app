@@ -14,28 +14,28 @@ The Fitness Tracker application has been fully implemented according to the proj
 
 ## 📸 Project Showcase
 
-![Home Page](docs/screenshots/home_page_logged_out_1773145411454.png)
+![Home Page](screenshots/home_page_logged_out_1773145411454.png)
 _Home Page (Logged Out)_
 
-![Login Page](docs/screenshots/login_page_1773145401905.png)
+![Login Page](screenshots/login_page_1773145401905.png)
 _Login Page_
 
-![Dashboard](docs/screenshots/dashboard_page_admin_1773145384593.png)
+![Dashboard](screenshots/dashboard_page_admin_1773145384593.png)
 _Dashboard (Admin View)_
 
-![Activities](docs/screenshots/activities_page_1773145360525.png)
+![Activities](screenshots/activities_page_1773145360525.png)
 _Workout Activities_
 
-![Friends](docs/screenshots/friends_page_1773145345709.png)
+![Friends](screenshots/friends_page_1773145345709.png)
 _Viewer Friends Activities_
 
-![Admin Panel](docs/screenshots/admin_page_1773145336968.png)
+![Admin Panel](screenshots/admin_page_1773145336968.png)
 _Admin Panel (User Management)_
 
 ### 📽️ Interaction Recording
 The following recording demonstrates the full user flow between logging in, viewing dashboard stats, and managing users/activities.
 
-![User Flow Demo](docs/screenshots/project_screenshots_1773145314925.webp)
+![User Flow Demo](screenshots/project_screenshots_1773145314925.webp)
 
 ---
 

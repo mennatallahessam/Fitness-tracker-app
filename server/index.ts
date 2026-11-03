@@ -9,7 +9,7 @@ dotenv.config()
 import authController from './controllers/auth'
 import usersController from './controllers/users'
 import activitiesController from './controllers/activities'
-import { seed as runSeeding } from './models/seed_data';
+import { seed as runSeeding } from './db/seed'
 import exerciseTypesController from './controllers/exerciseTypes'
 import { protect } from './middleware/auth'
 

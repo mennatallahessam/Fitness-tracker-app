@@ -99,7 +99,7 @@ Supabase uses `snake_case` for columns, but the API returns `camelCase`:
 // API Response: user.fullName, exerciseType.defaultCaloriesPerMinute
 ```
 
-This is handled automatically by helper functions in `models/supabase.ts`
+This is handled automatically by helper functions in `server/db/supabase.ts`
 
 ## 8. API Endpoints
 

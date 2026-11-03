@@ -8,7 +8,7 @@ const app = express.Router()
 app.get('/', async (req, res) => {
   try {
     const users = await model.getAll()
-    const enrichedUsers = await Promise.all(users.map(u => model.enrichUser(u)))
+    const enrichedUsers = await Promise.all(users.map((u: model.UserRecord) => model.enrichUser(u)))
     res.json({ status: 'success', data: enrichedUsers })
   } catch (error: any) {
     res.status(500).json({ status: 'error', message: error.message })
@@ -28,7 +28,7 @@ app.get('/search', async (req, res) => {
     if (!query) return res.json({ status: 'success', data: [] })
     const users = await model.search(query)
     // Filter out password and other sensitive info
-    const safeUsers = users.map(u => {
+    const safeUsers = users.map((u: model.UserRecord) => {
       const { password, ...safe } = u
       return safe
     })

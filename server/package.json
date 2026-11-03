@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "tsx index.ts",
-    "seed": "tsx models/seed_data.ts"
+    "seed": "tsx db/seed.ts",
+    "db:test": "tsx db/test-connection.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.104.1",

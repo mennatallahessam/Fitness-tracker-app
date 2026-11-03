@@ -1,20 +1,9 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { apiFetch, type ApiResponse } from '../api/session'
+import type { Role, User } from '../types'
 
-export type Role = 'admin' | 'user' | 'trainer'
-
-export interface User 
-{
-  id: string
-  username: string
-  email: string
-  fullName: string
-  password?: string
-  role: Role
-  friends: string[] // array of user IDs
-  avatar: string
-}
+export type { Role, User }
 
 export const useUsersStore = defineStore('users', () => 
   {

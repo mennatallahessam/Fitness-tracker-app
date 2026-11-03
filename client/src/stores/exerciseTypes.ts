@@ -1,12 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { apiFetch, type ApiResponse } from '../api/session'
+import type { ExerciseType } from '../types'
 
-export interface ExerciseType {
-  id: string
-  name: string
-  default_calories_per_minute: number
-}
+export type { ExerciseType }
 
 export const useExerciseTypeStore = defineStore('exerciseTypes', () => {
   const exerciseTypes = ref<ExerciseType[]>([])

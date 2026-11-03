@@ -1,4 +1,4 @@
-import { supabase, toCamelCase, toSnakeCase } from './supabase'
+import { supabase, toCamelCase, toSnakeCase } from '../db/supabase'
 import { getById as getExerciseTypeById } from './exerciseTypes'
 import { getById as getUserById } from './users'
 

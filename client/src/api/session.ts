@@ -1,14 +1,7 @@
-export const API_ROOT = import.meta.env.VITE_API_ROOT || (import.meta.env.PROD ? '/api/v1' : 'http://localhost:3000/api/v1');
+import type { ApiResponse } from '../types'
+export type { ApiResponse }
 
-/**
- * Shared API response type
- */
-export interface ApiResponse<T = any> {
-    status: 'success' | 'fail' | 'error';
-    data?: T;
-    message?: string;
-    token?: string;
-}
+export const API_ROOT = import.meta.env.VITE_API_ROOT || (import.meta.env.PROD ? '/api/v1' : 'http://localhost:3000/api/v1');
 
 /**
  * Get JWT from local storage

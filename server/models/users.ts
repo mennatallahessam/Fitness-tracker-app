@@ -1,4 +1,4 @@
-import { supabase, toCamelCase, toSnakeCase } from './supabase'
+import { supabase, toCamelCase, toSnakeCase } from '../db/supabase'
 
 export interface UserRecord {
   id: string
