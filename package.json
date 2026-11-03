@@ -7,8 +7,8 @@
     "start": "tsx server/index.ts",
     "dev": "concurrently \"npm run dev --prefix client\" \"tsx watch server/index.ts\"",
     "build": "npm run build --prefix client",
-    "seed": "tsx server/db/seed.ts",
-    "db:test": "tsx server/db/test-connection.ts",
+    "seed": "tsx --env-file=.env server/db/seed.ts",
+    "db:test": "tsx --env-file=.env server/db/test-connection.ts",
     "postinstall": "npm run install:all"
   },
   "dependencies": {

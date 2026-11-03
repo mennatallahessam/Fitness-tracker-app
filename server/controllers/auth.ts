@@ -36,8 +36,8 @@ app.post('/register', async (req, res) => {
       avatar
     })
 
-    const token = signToken(newUser.id)
     const safeUser = await enrichUser(newUser)
+    const token = signToken(safeUser)
 
     res.status(201).json({
       status: 'success',
@@ -68,8 +68,8 @@ app.post('/login', async (req, res) => {
       return res.status(401).json({ status: 'fail', message: 'Incorrect username or password' })
     }
 
-    const token = signToken(user.id)
     const safeUser = await enrichUser(user)
+    const token = signToken(safeUser)
 
     res.json({
       status: 'success',

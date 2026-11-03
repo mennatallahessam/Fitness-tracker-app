@@ -2,12 +2,11 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "tsx index.ts",
-    "seed": "tsx db/seed.ts",
-    "db:test": "tsx db/test-connection.ts"
+    "seed": "tsx --env-file=.env db/seed.ts",
+    "db:test": "tsx --env-file=.env db/test-connection.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.104.1",

@@ -1,13 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
-import dotenv from 'dotenv'
-dotenv.config()
+import { supabase } from './supabase'
 
-const supabaseUrl = process.env.SUPABASE_URL || ''
-const supabaseKey = process.env.SUPABASE_ANON_KEY || ''
-
-console.log('Testing connection to:', supabaseUrl)
-
-const supabase = createClient(supabaseUrl, supabaseKey)
+console.log('Testing connection to:', process.env.SUPABASE_URL)
 
 async function test() {
   try {

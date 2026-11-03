@@ -1,6 +1,7 @@
 import express from 'express'
+import bcrypt from 'bcryptjs'
 import * as model from '../models/users'
-import { protect, restrictTo } from '../middleware/auth'
+import { protect, restrictTo, signToken } from '../middleware/auth'
 
 const app = express.Router()
 
@@ -17,7 +18,6 @@ app.get('/', async (req, res) => {
 
 // GET /api/v1/users/me — for auth store init
 app.get('/me', (req: any, res) => {
-  if (!req.user) return res.status(401).json({ status: 'fail', message: 'Not authenticated' })
   res.json({ status: 'success', data: req.user })
 })
 
@@ -53,41 +53,39 @@ app.get('/:id', async (req, res) => {
 // POST /api/v1/users (Admin only)
 app.post('/', restrictTo('admin'), async (req, res) => {
   try {
-    const bcrypt = await import('bcryptjs');
-    const { password, ...rest } = req.body;
-    let newUserData = req.body;
-    
+    const { password, ...rest } = req.body
+    let newUserData = req.body
+
     if (password) {
-      const hashedPassword = await bcrypt.default.hash(password, 10);
-      newUserData = { ...rest, password: hashedPassword };
+      const hashedPassword = await bcrypt.hash(password, 10)
+      newUserData = { ...rest, password: hashedPassword }
     }
-    
-    const user = await model.create(newUserData);
-    const safeUser = await model.enrichUser(user);
-    res.status(201).json({ status: 'success', data: safeUser });
+
+    const user = await model.create(newUserData)
+    const safeUser = await model.enrichUser(user)
+    res.status(201).json({ status: 'success', data: safeUser })
   } catch (error: any) {
-    res.status(400).json({ status: 'fail', message: error.message });
+    res.status(400).json({ status: 'fail', message: error.message })
   }
 })
 
 // PATCH /api/v1/users/:id (Admin only)
 app.patch('/:id', restrictTo('admin'), async (req, res) => {
   try {
-    const bcrypt = await import('bcryptjs');
-    const { password, ...rest } = req.body;
-    let updates = req.body;
-    
+    const { password, ...rest } = req.body
+    let updates = req.body
+
     if (password) {
-      const hashedPassword = await bcrypt.default.hash(password, 10);
-      updates = { ...rest, password: hashedPassword };
+      const hashedPassword = await bcrypt.hash(password, 10)
+      updates = { ...rest, password: hashedPassword }
     }
 
-    const user = await model.update(req.params.id, updates);
-    if (!user) return res.status(404).json({ status: 'fail', message: 'User not found' });
-    const safeUser = await model.enrichUser(user);
-    res.json({ status: 'success', data: safeUser });
+    const user = await model.update(req.params.id, updates)
+    if (!user) return res.status(404).json({ status: 'fail', message: 'User not found' })
+    const safeUser = await model.enrichUser(user)
+    res.json({ status: 'success', data: safeUser })
   } catch (error: any) {
-    res.status(500).json({ status: 'error', message: error.message });
+    res.status(500).json({ status: 'error', message: error.message })
   }
 })
 
@@ -108,16 +106,17 @@ app.post('/friends', protect, async (req: any, res) => {
     const { friendId } = req.body
     const user = await model.getById(req.user.id)
     if (!user) return res.status(404).json({ status: 'fail', message: 'User not found' })
-    
+
     const friends = user.friends || []
     if (!friends.includes(friendId)) {
       friends.push(friendId)
       await model.update(user.id, { friends })
     }
-    
+
     const updatedUser = await model.getById(user.id)
     const safeUser = await model.enrichUser(updatedUser!)
-    res.json({ status: 'success', data: safeUser })
+    const token = signToken(safeUser)
+    res.json({ status: 'success', token, data: safeUser })
   } catch (error: any) {
     res.status(500).json({ status: 'error', message: error.message })
   }
@@ -129,13 +128,14 @@ app.delete('/friends/:friendId', protect, async (req: any, res) => {
     const { friendId } = req.params
     const user = await model.getById(req.user.id)
     if (!user) return res.status(404).json({ status: 'fail', message: 'User not found' })
-    
+
     const friends = (user.friends || []).filter((id: string) => id !== friendId)
     await model.update(user.id, { friends })
-    
+
     const updatedUser = await model.getById(user.id)
     const safeUser = await model.enrichUser(updatedUser!)
-    res.json({ status: 'success', data: safeUser })
+    const token = signToken(safeUser)
+    res.json({ status: 'success', token, data: safeUser })
   } catch (error: any) {
     res.status(500).json({ status: 'error', message: error.message })
   }

@@ -1,12 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { apiFetch, type ApiResponse } from '../api/session'
+import { apiFetch, setToken, type ApiResponse } from '../api/session'
+import { useAuthStore } from './auth'
 import type { Role, User } from '../types'
 
 export type { Role, User }
 
-export const useUsersStore = defineStore('users', () => 
-  {
+export const useUsersStore = defineStore('users', () => {
   const users = ref<User[]>([])
   const loading = ref(false)
 
@@ -53,14 +53,22 @@ export const useUsersStore = defineStore('users', () =>
   }
 
   async function addFriend(friendId: string) {
-    await apiFetch('/users/friends', {
+    const response = await apiFetch<ApiResponse<User>>('/users/friends', {
       method: 'POST',
       body: JSON.stringify({ friendId })
     })
+    const authStore = useAuthStore()
+    if (response.token) setToken(response.token)
+    if (response.data) authStore.currentUser = response.data
   }
 
   async function removeFriend(friendId: string) {
-    await apiFetch(`/users/friends/${friendId}`, { method: 'DELETE' })
+    const response = await apiFetch<ApiResponse<User>>(`/users/friends/${friendId}`, {
+      method: 'DELETE'
+    })
+    const authStore = useAuthStore()
+    if (response.token) setToken(response.token)
+    if (response.data) authStore.currentUser = response.data
   }
 
   return { users, loading, fetchAllUsers, getUserById, addUser, updateUser, deleteUser, addFriend, removeFriend }

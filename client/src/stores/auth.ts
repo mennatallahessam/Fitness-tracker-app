@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { type User } from './users'
+import { useActivitiesStore } from './activities'
 import { apiFetch, setToken, removeToken, type ApiResponse } from '../api/session'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -53,6 +54,8 @@ export const useAuthStore = defineStore('auth', () => {
     removeToken()
     token.value = null
     currentUser.value = null
+    const activitiesStore = useActivitiesStore()
+    activitiesStore.clearActivities()
   }
 
   /** Initialize user from token if available */

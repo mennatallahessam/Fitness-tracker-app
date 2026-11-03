@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs'
 import { supabase, toCamelCase, toSnakeCase } from '../db/supabase'
 
 export interface UserRecord {
@@ -90,7 +91,6 @@ export async function enrichUser(user: UserRecord) {
 }
 
 export async function seed() {
-  const bcrypt = await import('bcryptjs')
   const seedUsers = [
     {
       username: 'menna',
@@ -121,7 +121,7 @@ export async function seed() {
   for (const user of seedUsers) {
     const existing = await getByUsername(user.username)
     if (!existing) {
-      const hashedPassword = await bcrypt.default.hash(user.password, 10)
+      const hashedPassword = await bcrypt.hash(user.password, 10)
       await create({ ...user, password: hashedPassword } as any)
       console.log(`Created user: ${user.username}`)
     }

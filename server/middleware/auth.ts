@@ -1,16 +1,14 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-import { getById, enrichUser } from '../models/users'
-import dotenv from 'dotenv'
-dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fittrack-super-secret-key-2026'
 
-export function signToken(userId: string): string {
-  return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '30d' })
+export function signToken(user: Record<string, any>): string {
+  const { password, iat, exp, ...payload } = user
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '30d' })
 }
 
-export async function protect(req: any, res: Response, next: NextFunction) {
+export function protect(req: any, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ status: 'fail', message: 'Not authorized, no token provided' })
@@ -19,13 +17,8 @@ export async function protect(req: any, res: Response, next: NextFunction) {
   const token = authHeader.split(' ')[1]
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string }
-    const user = await getById(decoded.id)
-    if (!user) {
-      return res.status(401).json({ status: 'fail', message: 'User belonging to this token no longer exists' })
-    }
-    // Attach enriched user to request (without password, with friends populated)
-    req.user = await enrichUser(user)
+    const decoded = jwt.verify(token, JWT_SECRET)
+    req.user = decoded
     next()
   } catch (error) {
     return res.status(401).json({ status: 'fail', message: 'Invalid or expired token' })

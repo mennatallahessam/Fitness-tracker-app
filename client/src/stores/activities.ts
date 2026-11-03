@@ -16,16 +16,12 @@ export const useActivitiesStore = defineStore('activities', () => {
 
   // ── Time-filtered getters (Extra Credit Statistics) ──────────────────────
   const todayActivities = computed(() => {
-    const authStore = useAuthStore()
-    if (!authStore.currentUser) return []
     const todayStr = new Date().toISOString().split('T')[0] || ''
     return activities.value.filter(
       a => a.date?.startsWith(todayStr)
     )
   })
 
-  // ... (Other computed stays similar but filtered by date/user if not already filtered by API)
-  
   const thisWeekActivities = computed(() => {
     const sevenDaysAgo = new Date(Date.now() - 86400000 * 7).toISOString().split('T')[0] || ''
     return activities.value.filter(
@@ -37,10 +33,24 @@ export const useActivitiesStore = defineStore('activities', () => {
     return activities.value
   })
 
+  function requireAuth() {
+    const authStore = useAuthStore()
+    if (!authStore.currentUser) {
+      throw new Error('You must be logged in to perform this action')
+    }
+  }
+
   async function fetchMyActivities(isInitial = true, limit = 10) {
+    const authStore = useAuthStore()
+    if (!authStore.currentUser) {
+      activities.value = []
+      totalCount.value = 0
+      hasMore.value = false
+      return
+    }
     if (loading.value) return
     loading.value = true
-    
+
     if (isInitial) {
       currentOffset.value = 0
       activities.value = []
@@ -51,11 +61,11 @@ export const useActivitiesStore = defineStore('activities', () => {
       const response = await apiFetch<ApiResponse<Activity[]> & { total: number }>(
         `/activities/me?limit=${limit}&offset=${currentOffset.value}`
       )
-      
+
       const newActivities = response.data || []
       activities.value = isInitial ? newActivities : [...activities.value, ...newActivities]
       totalCount.value = response.total || 0
-      
+
       currentOffset.value += newActivities.length
       hasMore.value = activities.value.length < totalCount.value
     } finally {
@@ -64,11 +74,13 @@ export const useActivitiesStore = defineStore('activities', () => {
   }
 
   async function fetchUserActivities(userId: string) {
+    requireAuth()
     const response = await apiFetch<ApiResponse<Activity[]>>(`/activities/user/${userId}`)
     return response.data || []
   }
 
   async function addActivity(activity: Omit<Activity, 'id'>) {
+    requireAuth()
     const response = await apiFetch<ApiResponse<Activity>>('/activities', {
       method: 'POST',
       body: JSON.stringify(activity)
@@ -80,6 +92,7 @@ export const useActivitiesStore = defineStore('activities', () => {
   }
 
   async function updateActivity(id: string, updates: Partial<Activity>) {
+    requireAuth()
     const response = await apiFetch<ApiResponse<Activity>>(`/activities/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(updates)
@@ -91,14 +104,23 @@ export const useActivitiesStore = defineStore('activities', () => {
   }
 
   async function deleteActivity(id: string) {
+    requireAuth()
     await apiFetch(`/activities/${id}`, { method: 'DELETE' })
     activities.value = activities.value.filter(a => a.id !== id)
     totalCount.value--
   }
 
   async function searchUsers(query: string) {
+    requireAuth()
     const response = await apiFetch<ApiResponse<any[]>>(`/users/search?q=${query}`)
     return response.data || []
+  }
+
+  function clearActivities() {
+    activities.value = []
+    totalCount.value = 0
+    currentOffset.value = 0
+    hasMore.value = true
   }
 
   return {
@@ -114,7 +136,7 @@ export const useActivitiesStore = defineStore('activities', () => {
     searchUsers,
     addActivity,
     updateActivity,
-    deleteActivity
+    deleteActivity,
+    clearActivities
   }
 })
-
